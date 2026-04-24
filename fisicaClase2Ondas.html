@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Física PAES — El ADN de la Onda</title>
+<style>
+/* Reset básico y scroll asegurado */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f1117;color:#f0f0f0;overflow-x:hidden}
+
+/* SLIDES */
+/* Se quitó el height fijo para permitir el scroll natural y se agregó padding inferior de 120px para proteger del menú */
+.slide{display:none;min-height:100vh;padding:60px 80px 120px;flex-direction:column;justify-content:center}
+.slide.active{display:flex}
+
+/* PORTADA */
+#s0{align-items:center;text-align:center}
+#s0 .big{font-size:50px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:14px}
+#s0 .sub{font-size:20px;color:#94a3b8;margin-bottom:10px}
+#s0 .context{font-size:16px;color:#94a3b8;max-width:620px;line-height:1.7;margin-top:24px}
+#s0 .tag{display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:6px 18px;font-size:14px;color:#94a3b8;margin-top:20px}
+
+/* HEADERS */
+.seg-bar{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.seg-badge{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 14px;border-radius:20px}
+.seg-time{font-size:13px;color:#64748b}
+h2{font-size:34px;font-weight:700;color:#fff;margin-bottom:22px;line-height:1.2}
+
+/* CARDS E INFORMACIÓN */
+.parts{display:grid;gap:14px}
+.part{border-radius:10px;padding:16px 20px}
+.part-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.part p{font-size:15px;line-height:1.65;color:#e2e8f0}
+.part ul{padding-left:18px;margin-top:6px}
+.part li{font-size:14px;line-height:1.75;color:#e2e8f0;margin-bottom:4px}
+
+/* COLORES CONCEPTOS */
+.blue .seg-badge{background:#0c1a2e;color:#7dd3fc}
+.blue .part{background:#0a1520}
+.blue .part-label{color:#38bdf8}
+
+.green .seg-badge{background:#052e16;color:#86efac}
+.green .part{background:#031a0d}
+.green .part-label{color:#4ade80}
+
+.orange .seg-badge{background:#2d1000;color:#fdba74}
+.orange .part{background:#1c0a00}
+.orange .part-label{color:#fb923c}
+
+/* ELEMENTOS INTERACTIVOS */
+.var-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.var-pill{border-radius:6px;padding:8px 16px;font-size:14px;font-weight:600;text-align:center;flex:1;min-width:120px}
+
+/* PREGUNTA INICIAL (TRAMPA) */
+.trampa{background:#1c1000;border:1px solid #78350f;border-radius:10px;padding:16px 20px;margin-bottom:14px}
+.trampa-q{font-size:18px;color:#fbbf24;font-weight:600;margin-bottom:10px}
+.trampa-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.topt{background:#0f1117;border:1px solid #292524;border-radius:8px;padding:12px 16px;font-size:14px;color:#cbd5e1;cursor:pointer;text-align:left;transition:background .15s}
+.topt:hover{background:#1c1000}
+.topt.correct{background:#052e16;border-color:#16a34a;color:#86efac}
+.topt.wrong{background:#2d0000;border-color:#b91c1c;color:#fca5a5}
+.trampa-exp{display:none;margin-top:12px;font-size:14px;padding:12px 16px;border-radius:6px;line-height:1.6;background:#052e16;color:#86efac}
+
+/* CASOS COTIDIANOS */
+.casos-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.caso{border-radius:10px;padding:14px 18px}
+.caso-emoji{font-size:22px;margin-bottom:6px}
+.caso-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.caso-desc{font-size:13px;color:#94a3b8;line-height:1.55}
+.caso-type{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:8px}
+.rev-btn{font-size:12px;background:#1e293b;border:none;color:#94a3b8;padding:6px 14px;border-radius:5px;cursor:pointer;margin-top:10px;font-weight:600}
+.rev-btn:hover{background:#334155;color:#fff}
+.rev-ans{display:none;margin-top:10px;font-size:13px;line-height:1.55;padding:10px 14px;border-radius:6px;background:#0c1020;color:#a5f3fc;border-left:3px solid #0ea5e9}
+
+/* TAREA CENTRAL */
+.tarea-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.tarea-part{border-radius:10px;padding:14px 18px}
+.tarea-lvl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.tarea-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:8px}
+.tarea-q{font-size:14px;color:#94a3b8;line-height:1.6}
+
+/* QUIZ */
+.quiz-q{font-size:16px;color:#e2e8f0;line-height:1.6;margin-bottom:16px;background:#13192a;border-radius:8px;padding:16px 20px}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qopt{background:#0f1117;border:1px solid #1e293b;border-radius:8px;padding:12px 16px;font-size:14px;color:#cbd5e1;cursor:pointer;text-align:left;transition:all .15s}
+.qopt:hover{background:#1e293b}
+.qopt.correct{background:#052e16!important;border-color:#16a34a!important;color:#86efac!important}
+.qopt.wrong{background:#2d0000!important;border-color:#b91c1c!important;color:#fca5a5!important}
+.quiz-exp{display:none;margin-top:16px;font-size:14px;padding:14px 18px;border-radius:6px;line-height:1.6}
+.quiz-nav{display:flex;gap:10px;align-items:center;margin-top:20px}
+.quiz-nav button{background:#1e293b;border:none;color:#94a3b8;padding:8px 20px;border-radius:6px;font-size:14px;cursor:pointer;font-weight:600}
+.quiz-nav button:hover{background:#334155;color:#fff}
+.quiz-nav button:disabled{opacity:.3;cursor:default}
+.quiz-prog{font-size:14px;color:#64748b;font-weight:600;margin-left:auto}
+
+/* RESPUESTAS CLAVE */
+#s-resp{background:#0f1117}
+#s-resp h2{font-size:28px;margin-bottom:20px}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ans-card{border-radius:10px;padding:16px 18px;border:1px solid}
+.ans-card h3{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.ans-card ul{padding-left:16px}
+.ans-card li{font-size:13px;line-height:1.65;margin-bottom:6px;color:#e2e8f0}
+.ans-blue{background:#0a1520;border-color:#0c1a2e}.ans-blue h3{color:#38bdf8}
+.ans-green{background:#031a0d;border-color:#052e16}.ans-green h3{color:#4ade80}
+.ans-orange{background:#1c0a00;border-color:#2d1000}.ans-orange h3{color:#fb923c}
+.ans-gray{background:#13192a;border-color:#1e293b}.ans-gray h3{color:#94a3b8}
+
+/* NAVEGACIÓN INFERIOR */
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;background:#090c12;border-top:1px solid #1e293b;z-index:100}
+nav button{background:#1e293b;border:none;color:#94a3b8;padding:8px 20px;border-radius:6px;font-size:14px;cursor:pointer;font-weight:600}
+nav button:hover{background:#334155;color:#fff}
+nav button:disabled{opacity:.3;cursor:default}
+.counter{font-size:13px;color:#475569;font-weight:600}
+.dots{display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#1e293b;cursor:pointer;transition:background .2s}
+.dot.active{background:#94a3b8}
+.hint{position:fixed;top:16px;right:20px;font-size:11px;color:#475569}
+</style>
+</head>
+<body>
+
+<!-- S0 PORTADA -->
+<div class="slide active" id="s0">
+  <div class="big">El ADN de la Onda</div>
+  <div class="sub">Ondas Electromagnéticas · Física PAES · 4° Medio</div>
+  <div class="context">Un rayo de luz roja entra a una piscina. Viaja más lento. ¿Sigue siendo roja? ¿Cambia su frecuencia? ¿Qué le pasa a su longitud de onda? Hoy descubren las tres reglas que la PAES usa siempre para preguntar sobre ondas, y aprenden a responderlas sin calcular nada.</div>
+  <div class="tag">Frecuencia · v = λf · Absorción · Reflexión · Refracción</div>
+</div>
+
+<!-- S1 GANCHO — PREGUNTA TRAMPA -->
+<div class="slide" id="s1">
+  <div class="seg-bar">
+    <span class="seg-badge" style="background:#1a0a00;color:#fdba74">Inicio · 0–10 min</span>
+    <span class="seg-time">La pregunta que mata en la PAES</span>
+  </div>
+  <h2>Antes de enseñarles nada, respondan esto:</h2>
+  <div class="trampa">
+    <div class="trampa-q">Un láser verde ilumina una pecera. Dentro del agua, la luz viaja más lento. ¿Qué pasa con el COLOR de la luz dentro del agua?</div>
+    <div class="trampa-opts" id="trampa-opts">
+      <button class="topt" onclick="answerTrampa(0)">A) Se ve más azulado porque va más lento</button>
+      <button class="topt" onclick="answerTrampa(1)">B) Sigue siendo exactamente verde</button>
+      <button class="topt" onclick="answerTrampa(2)">C) Se ve más rojizo porque pierde energía</button>
+      <button class="topt" onclick="answerTrampa(3)">D) Cambia levemente según la profundidad</button>
+    </div>
+    <div class="trampa-exp" id="trampa-exp">✓ Sigue siendo verde. El color depende de la frecuencia, y la frecuencia NUNCA cambia al cambiar de medio. La fuente (el láser) es la única que define la frecuencia. Hoy van a entender exactamente por qué.</div>
+  </div>
+</div>
+
+<!-- S2 CONCEPTO 1 — FRECUENCIA INTOCABLE -->
+<div class="slide blue" id="s2">
+  <div class="seg-bar">
+    <span class="seg-badge">Concepto 1 · 10–25 min</span>
+    <span class="seg-time">El ADN de la onda — la frecuencia es intocable</span>
+  </div>
+  <h2>La frecuencia depende solo de la fuente</h2>
+  <div class="parts" style="grid-template-columns:1fr 1fr;gap:14px">
+    <div class="part">
+      <div class="part-label">La regla de oro</div>
+      <p>Cuando una onda cambia de medio:</p>
+      <ul>
+        <li style="color:#fca5a5">❌ Velocidad → <b>cambia</b></li>
+        <li style="color:#fca5a5">❌ Longitud de onda (λ) → <b>cambia</b></li>
+        <li style="color:#86efac">✓ Frecuencia (f) → <b>JAMÁS cambia</b></li>
+        <li style="color:#86efac">✓ Período (T) → <b>JAMÁS cambia</b></li>
+      </ul>
+      <p style="margin-top:12px;font-size:14px;color:#7dd3fc">La frecuencia nació con la fuente. Si nació siendo luz verde, morirá siendo luz verde.</p>
+    </div>
+    <div class="part">
+      <div class="part-label">Analogía</div>
+      <p>Imagina que la fuente es un cocinero que lanza empanadas cada 2 segundos (eso es el período T). No importa si el camino es pavimentado o con barro: sigue lanzando una cada 2 segundos. El barro solo hace que las empanadas viajen más lento y más juntas, pero siguen siendo una cada 2 segundos.</p>
+    </div>
+  </div>
+  <div class="var-row" style="margin-top:14px">
+    <div class="var-pill" style="background:#0c1a2e;color:#7dd3fc">f = constante<br><span style="font-size:11px;font-weight:400">No cambia con el medio</span></div>
+    <div class="var-pill" style="background:#0c1a2e;color:#7dd3fc">T = constante<br><span style="font-size:11px;font-weight:400">T = 1/f, tampoco cambia</span></div>
+    <div class="var-pill" style="background:#1a0a2e;color:#c084fc">v → cambia<br><span style="font-size:11px;font-weight:400">Depende del medio</span></div>
+    <div class="var-pill" style="background:#1a0a2e;color:#c084fc">λ → cambia<br><span style="font-size:11px;font-weight:400">Proporcional a v</span></div>
+  </div>
+</div>
+
+<!-- S3 CONCEPTO 2 — v = λf -->
+<div class="slide green" id="s3">
+  <div class="seg-bar">
+    <span class="seg-badge">Concepto 2 · 25–40 min</span>
+    <span class="seg-time">El peaje del medio — v = λ · f</span>
+  </div>
+  <h2>Si f no cambia, v y λ son proporcionales</h2>
+  <div class="parts" style="grid-template-columns:1fr 1fr;gap:14px">
+    <div class="part">
+      <div class="part-label">La ecuación clave</div>
+      <p style="font-size:24px;font-weight:700;color:#4ade80;margin-bottom:12px;font-family:'Courier New',monospace">v = λ · f</p>
+      <p>Como <b>f es constante</b>, v y λ son directamente proporcionales. Si una cae a la mitad, la otra también.</p>
+      <ul style="margin-top:10px">
+        <li>La onda entra a un medio más denso → v disminuye</li>
+        <li>Para que v = λ · f se mantenga con f fijo → λ también disminuye</li>
+        <li>La onda se "achata": las crestas quedan más juntas</li>
+      </ul>
+    </div>
+    <div class="part">
+      <div class="part-label">Preguntas sin calculadora</div>
+      <p style="margin-bottom:10px">Si la velocidad de la luz en el vidrio cae a <b>1/3</b> de su valor en el aire...</p>
+      <ul>
+        <li>¿Qué pasa con f? → <span style="color:#4ade80">Nada, no cambia</span></li>
+        <li>¿Qué pasa con λ? → <span style="color:#4ade80">Cae a 1/3</span></li>
+        <li>¿Qué pasa con T? → <span style="color:#4ade80">Nada, no cambia</span></li>
+        <li>¿El color cambia? → <span style="color:#4ade80">No, color = frecuencia</span></li>
+      </ul>
+      <p style="margin-top:12px;font-size:13px;color:#4ade80">Sin multiplicar ni dividir. Solo proporcionalidad.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S4 CONCEPTO 3 — LOS TRES DESTINOS -->
+<div class="slide orange" id="s4">
+  <div class="seg-bar">
+    <span class="seg-badge">Concepto 3 · 40–55 min</span>
+    <span class="seg-time">El destino de la energía</span>
+  </div>
+  <h2>Cuando la luz choca, pasan tres cosas a la vez</h2>
+  <div class="casos-grid">
+    <div class="caso" style="background:#0a1520">
+      <div class="caso-emoji" style="font-size:20px">↩</div>
+      <div class="caso-title" style="color:#7dd3fc">Reflexión</div>
+      <div class="caso-desc">La onda rebota. Regresa al mismo medio. Velocidad, λ y f no cambian.</div>
+      <div class="caso-type" style="color:#38bdf8">Ángulo de entrada = ángulo de salida</div>
+    </div>
+    <div class="caso" style="background:#031a0d">
+      <div class="caso-emoji" style="font-size:20px">↪</div>
+      <div class="caso-title" style="color:#86efac">Refracción</div>
+      <div class="caso-desc">La onda cruza al otro medio. Velocidad y λ cambian. Frecuencia NO cambia.</div>
+      <div class="caso-type" style="color:#4ade80">El rayo se dobla al cambiar de velocidad</div>
+    </div>
+    <div class="caso" style="background:#1c0a00">
+      <div class="caso-emoji" style="font-size:20px">♨</div>
+      <div class="caso-title" style="color:#fdba74">Absorción</div>
+      <div class="caso-desc">La energía de la onda calienta el material. La onda no continúa ni rebota.</div>
+      <div class="caso-type" style="color:#fb923c">La energía se transforma en calor</div>
+    </div>
+    <div class="caso" style="background:#13192a">
+      <div class="caso-emoji" style="font-size:20px">≡</div>
+      <div class="caso-title" style="color:#e2e8f0">Clave PAES</div>
+      <div class="caso-desc">En la vida real ocurren los tres al mismo tiempo. Una ventana reflexiona, refracta y absorbe luz simultáneamente.</div>
+      <div class="caso-type" style="color:#94a3b8">La proporción depende del material</div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 CASOS COTIDIANOS -->
+<div class="slide orange" id="s5">
+  <div class="seg-bar">
+    <span class="seg-badge">Concepto 3 · 40–55 min</span>
+    <span class="seg-time">Clasificen cada situación</span>
+  </div>
+  <h2>¿Reflexión, refracción o absorción?</h2>
+  <div class="casos-grid">
+    <div class="caso" style="background:#13192a">
+      <div class="caso-title" style="color:#e2e8f0;margin-bottom:4px">Auto negro vs blanco al sol</div>
+      <div class="caso-desc">El negro absorbe todas las frecuencias visibles → se calienta más. El blanco las refleja casi todas → se calienta menos.</div>
+      <button class="rev-btn" onclick="toggle('c1')">Ver fenómeno</button>
+      <div class="rev-ans" id="c1">Absorción (negro) vs Reflexión (blanco)</div>
+    </div>
+    <div class="caso" style="background:#13192a">
+      <div class="caso-title" style="color:#e2e8f0;margin-bottom:4px">Ver el láser en el humo</div>
+      <div class="caso-desc">Las partículas de humo redirigen la luz en todas direcciones para que llegue a tus ojos desde ángulos donde no estabas mirando.</div>
+      <button class="rev-btn" onclick="toggle('c2')">Ver fenómeno</button>
+      <div class="rev-ans" id="c2">Reflexión difusa en las partículas de humo</div>
+    </div>
+    <div class="caso" style="background:#13192a">
+      <div class="caso-title" style="color:#e2e8f0;margin-bottom:4px">Verte en una ventana de noche</div>
+      <div class="caso-desc">Cuando el exterior está oscuro, la parte de luz que la ventana refleja es visible. Durante el día, la refracción domina y no te ves.</div>
+      <button class="rev-btn" onclick="toggle('c3')">Ver fenómeno</button>
+      <div class="rev-ans" id="c3">Reflexión parcial (siempre existe, pero solo notable en la oscuridad)</div>
+    </div>
+    <div class="caso" style="background:#13192a">
+      <div class="caso-title" style="color:#e2e8f0;margin-bottom:4px">Un lápiz que "se quiebra" en agua</div>
+      <div class="caso-desc">El lápiz no se quiebra. La luz que viene del lápiz cambia de dirección al salir del agua, engañando al ojo.</div>
+      <button class="rev-btn" onclick="toggle('c4')">Ver fenómeno</button>
+      <div class="rev-ans" id="c4">Refracción: la luz cambia de velocidad al pasar agua→aire y se dobla</div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 TAREA CENTRAL -->
+<div class="slide blue" id="s6">
+  <div class="seg-bar">
+    <span class="seg-badge">Tarea central · 55–75 min</span>
+    <span class="seg-time">El recital láser</span>
+  </div>
+  <h2>Un láser rojo atraviesa una pecera</h2>
+  <p style="font-size:15px;color:#94a3b8;margin-bottom:16px">En un recital, un láser rojo apunta hacia una pecera de vidrio llena de agua. El rayo pasa por: Aire → Vidrio → Agua → Vidrio → Aire.</p>
+  <div class="tarea-grid">
+    <div class="tarea-part" style="background:#0a1520">
+      <div class="tarea-lvl" style="color:#38bdf8">Piso bajo — Identificar</div>
+      <div class="tarea-title">¿Qué nombre tiene cada fenómeno?</div>
+      <div class="tarea-q">Cuando el rayo entra al vidrio, ¿cómo se llama ese fenómeno? Nombra los tres fenómenos que ocurren simultáneamente en esa interfaz. ¿Cuál es el medio 1 y el medio 2?</div>
+    </div>
+    <div class="tarea-part" style="background:#0c1020">
+      <div class="tarea-lvl" style="color:#7dd3fc">Escalón medio — Relacionar</div>
+      <div class="tarea-title">La pregunta trampa</div>
+      <div class="tarea-q">Dentro del agua, el rayo viaja más lento que en el aire. ¿Cambia el color del láser? ¿Cambia su frecuencia? ¿Cambia su período? Argumenta cada respuesta.</div>
+    </div>
+    <div class="tarea-part" style="background:#0d0a20">
+      <div class="tarea-lvl" style="color:#a5b4fc">Techo alto — Argumentar</div>
+      <div class="tarea-title">Con v = λ · f</div>
+      <div class="tarea-q">Un buzo mide la distancia entre crestas del láser bajo el agua. ¿Es mayor, menor o igual que en el aire? ¿Y si el agua fuera reemplazada por vidrio (donde la luz va aún más lento)? Argumenta sin calcular.</div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 QUIZ FINAL -->
+<div class="slide" id="s7">
+  <div class="seg-bar">
+    <span class="seg-badge" style="background:#1a0a2e;color:#d8b4fe">Prueba de fuego · 75–80 min</span>
+    <span class="seg-time">Cero cálculos</span>
+  </div>
+  <h2 id="quiz-title">Pregunta 1 de 5</h2>
+  <div id="quiz-area"></div>
+  <div class="quiz-nav">
+    <button id="q-prev" onclick="qMove(-1)" disabled>← Anterior</button>
+    <span class="quiz-prog" id="q-score"></span>
+    <button id="q-next" onclick="qMove(1)" disabled>Siguiente →</button>
+  </div>
+</div>
+
+<!-- S8 RESPUESTAS CLAVE -->
+<div class="slide" id="s-resp">
+  <h2>Respuestas clave</h2>
+  <div class="ans-grid">
+    <div class="ans-card ans-blue">
+      <h3>El ADN — Frecuencia intocable</h3>
+      <ul>
+        <li>Al cambiar de medio: f y T <b>no cambian jamás</b>.</li>
+        <li>El color depende de f → si nació rojo, sigue rojo.</li>
+        <li>La frecuencia la fija exclusivamente la fuente.</li>
+      </ul>
+    </div>
+    <div class="ans-card ans-green">
+      <h3>v = λ · f — El peaje</h3>
+      <ul>
+        <li>f constante → v y λ son directamente proporcionales.</li>
+        <li>Si v cae a 1/3, λ cae a 1/3. Sin calculadora.</li>
+        <li>En el medio más denso: onda más lenta, crestas más juntas (λ menor).</li>
+      </ul>
+    </div>
+    <div class="ans-card ans-orange">
+      <h3>Los tres destinos</h3>
+      <ul>
+        <li><b>Reflexión:</b> rebota, misma velocidad, mismo medio.</li>
+        <li><b>Refracción:</b> cruza, cambia v y λ, f igual.</li>
+        <li><b>Absorción:</b> energía → calor, la onda no continúa.</li>
+        <li>En la vida real los tres ocurren <b>simultáneamente</b>.</li>
+      </ul>
+    </div>
+    <div class="ans-card ans-gray">
+      <h3>Tarea central — Pecera</h3>
+      <ul>
+        <li><b>Piso bajo:</b> Refracción. Simultáneo: reflexión + refracción + absorción.</li>
+        <li><b>Escalón:</b> color = rojo, f = igual, T = igual. Solo cambia v y λ.</li>
+        <li><b>Techo:</b> λ es menor en el agua (v menor, f fija → λ menor). En vidrio aún menor.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- NAVEGACIÓN -->
+<nav>
+  <button id="btn-prev" onclick="move(-1)" disabled>← Anterior</button>
+  <div style="display:flex;align-items:center;gap:18px">
+    <div class="dots" id="dots"></div>
+    <span class="counter" id="counter">1 / 9</span>
+  </div>
+  <button id="btn-next" onclick="move(1)">Siguiente →</button>
+</nav>
+<div class="hint">← → para navegar</div>
+
+<script>
+// NAVEGACIÓN BÁSICA
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
+const dotsEl = document.getElementById('dots');
+
+for(let i=0; i<total; i++){
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0 ? ' active' : '');
+  d.onclick = () => go(i);
+  dotsEl.appendChild(d);
+}
+
+function go(n){
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(n, total-1));
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  document.getElementById('counter').textContent = (cur+1) + ' / ' + total;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === total-1;
+  // Resetea el scroll cada vez que cambias de slide
+  window.scrollTo(0,0);
+}
+
+function move(d){ go(cur+d); }
+
+// Solo permite avanzar con flechas Derecha/Izquierda para evitar saltos al hacer scroll vertical
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight') move(1);
+  if(e.key === 'ArrowLeft') move(-1);
+});
+
+function toggle(id){
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+// LÓGICA PREGUNTA TRAMPA (Slide 1)
+function answerTrampa(i){
+  const opts = document.querySelectorAll('.topt');
+  opts.forEach((b, j) => {
+    b.disabled = true;
+    if(j === 1) b.classList.add('correct');
+    else if(j === i) b.classList.add('wrong');
+  });
+  document.getElementById('trampa-exp').style.display = 'block';
+}
+
+// MOTOR DEL QUIZ FINAL (Slide 7)
+const quiz =[
+  {
+    q: 'Un astronauta en el espacio exterior (vacío) ve explotar un satélite a lo lejos. Él puede ver el destello de la explosión, pero no escuchar el sonido. ¿A qué se debe esto?',
+    opts:[
+      'A) La luz es una onda transversal y el sonido es longitudinal.',
+      'B) La luz es electromagnética y el sonido es onda mecánica.',
+      'C) La frecuencia de la luz es mucho mayor que la del sonido.',
+      'D) El sonido experimenta refracción y se desvía en el vacío.'
+    ],
+    ans: 1,
+    exp: 'Las ondas mecánicas (como el sonido) necesitan obligatoriamente un medio material (partículas) para vibrar y propagarse. Las ondas electromagnéticas (como la luz) pueden viajar por el vacío.'
+  },
+  {
+    q: 'Una onda sonora pasa del aire al agua. Sabiendo que el sonido viaja MÁS RÁPIDO en el agua que en el aire, ¿qué le ocurre a su longitud de onda (λ) y a su frecuencia (f)?',
+    opts:[
+      'A) λ aumenta y f se mantiene constante.',
+      'B) λ disminuye y f aumenta.',
+      'C) Ambas magnitudes aumentan proporcionalmente.',
+      'D) Ambas se mantienen constantes.'
+    ],
+    ans: 0,
+    exp: 'La regla de oro: la frecuencia NUNCA cambia de medio. Si la velocidad aumenta, la longitud de onda debe aumentar para mantener el equilibrio en la fórmula v = λ·f.'
+  },
+  {
+    q: 'En un día muy caluroso se recomienda usar ropa blanca en lugar de ropa negra. Físicamente, esto se debe a que la ropa blanca...',
+    opts:[
+      'A) refracta la luz hacia el interior del cuerpo.',
+      'B) absorbe mayor cantidad de radiación electromagnética.',
+      'C) refleja la mayor parte de la radiación incidente.',
+      'D) difracta las ondas de calor hacia el entorno.'
+    ],
+    ans: 2,
+    exp: 'El color blanco refleja casi todas las frecuencias de la luz visible, evitando que la energía se transforme en calor. El color negro absorbe esa energía.'
+  },
+  {
+    q: 'Al estar en una habitación, puedes escuchar a tu mamá hablando en el pasillo aunque ella esté detrás de un muro y no la puedas ver. ¿Qué fenómeno permite que el sonido "doble" o rodee la esquina de la puerta?',
+    opts:[
+      'A) Refracción',
+      'B) Reflexión',
+      'C) Difracción',
+      'D) Interferencia'
+    ],
+    ans: 2,
+    exp: 'La difracción es la capacidad de una onda para rodear obstáculos o pasar por pequeñas aberturas y propagarse detrás de ellos.'
+  },
+  {
+    q: 'Dos ondas electromagnéticas distintas, un rayo de luz roja y una señal de radio Wi-Fi, viajan por el vacío del espacio. ¿En qué se diferencian y en qué se parecen?',
+    opts:[
+      'A) Tienen igual frecuencia, pero distinta velocidad.',
+      'B) Tienen distinta frecuencia y distinta velocidad.',
+      'C) Tienen distinta frecuencia, pero viajan a la MISMA velocidad.',
+      'D) Tienen igual longitud de onda e igual velocidad.'
+    ],
+    ans: 2,
+    exp: 'TODAS las ondas electromagnéticas viajan a la misma velocidad en el vacío (aprox. 300.000 km/s), sin importar si son radio, microondas, rayos X o luz visible. Difieren en su frecuencia y energía.'
+  }
+];
+
+let qcur = 0;
+let qscores = new Array(quiz.length).fill(null);
+
+function buildQ(){
+  const q = quiz[qcur];
+  document.getElementById('quiz-title').textContent = 'Pregunta ' + (qcur + 1) + ' de ' + quiz.length;
+  const area = document.getElementById('quiz-area');
+  
+  // Limpiamos el área para volver a dibujar
+  area.innerHTML = '';
+  
+  // Imprimir pregunta
+  const qbox = document.createElement('div');
+  qbox.className = 'quiz-q';
+  qbox.textContent = q.q;
+  area.appendChild(qbox);
+  
+  // Imprimir botones (opciones)
+  const grid = document.createElement('div');
+  grid.className = 'quiz-opts';
+  
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'qopt';
+    btn.textContent = opt;
+    
+    // Si la pregunta ya fue respondida, bloqueamos botones y asignamos colores
+    if (qscores[qcur] !== null) {
+      btn.disabled = true;
+      if (i === q.ans) {
+        btn.classList.add('correct');
+      } else if (i === qscores[qcur]) {
+        btn.classList.add('wrong');
+      }
+    } else {
+      // Si no ha sido respondida, escuchamos el clic
+      btn.onclick = () => answerQ(i);
+    }
+    
+    grid.appendChild(btn);
+  });
+  
+  area.appendChild(grid);
+  
+  // Explicación (Solo se muestra si ya se respondió)
+  if (qscores[qcur] !== null) {
+    const exp = document.createElement('div');
+    exp.className = 'quiz-exp';
+    exp.style.background = (qscores[qcur] === q.ans) ? '#052e16' : '#2d0000';
+    exp.style.color = (qscores[qcur] === q.ans) ? '#86efac' : '#fca5a5';
+    exp.textContent = q.exp;
+    exp.style.display = 'block';
+    area.appendChild(exp);
+  }
+  
+  // Actualizar controles
+  document.getElementById('q-prev').disabled = (qcur === 0);
+  document.getElementById('q-next').disabled = (qscores[qcur] === null || qcur === quiz.length - 1);
+  
+  // Actualizar Score Text
+  const done = qscores.filter(x => x !== null).length;
+  const correct = qscores.filter((x, i) => x === quiz[i].ans).length;
+  document.getElementById('q-score').textContent = done > 0 ? correct + ' correctas de ' + done + ' respondidas' : '';
+}
+
+function answerQ(i){
+  // Guardamos la respuesta y reconstruimos todo el DOM del Quiz para evitar problemas de eventos superpuestos
+  qscores[qcur] = i;
+  buildQ();
+}
+
+function qMove(d){
+  qcur = Math.max(0, Math.min(qcur + d, quiz.length - 1));
+  buildQ();
+}
+
+// Inicializar el Quiz
+buildQ();
+</script>
+</body>
+</html>
